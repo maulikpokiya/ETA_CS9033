@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+		<TextView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="Location" />
+
+       <TextView 
+           android:id="@+id/tripLocation"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" />
+   
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" 
+           android:text="Date"/>
+       
+       <TextView
+           android:id="@+id/tripDate"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" />
+<!--       android:inputType="textPassword" />		-->
+  
+       <!-- <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Time" />
+       
+       <TextView
+           android:id="@+id/tripTime"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"/>
+      android:inputType="textPassword" />	
+ -->
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content" 
+           android:text="Friends" />
+       
+	    <TextView
+	       	android:id="@+id/tripFriends"
+	       	android:layout_width="wrap_content"
+	       	android:layout_height="wrap_content" />
+<!-- 	       	android:inputType="textEmailAddress" />	 -->
+
+		<Button
+		    android:id="@+id/btnCancelTripView"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:onClick="cancelTripView"
+		    android:text="OK" />
+
+</LinearLayout>

@@ -19,13 +19,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class TripDatabaseHelper extends SQLiteOpenHelper {
 
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 3;
 	private static final String DATABASE_NAME = "trips";
 
 	private static final String TABLE_TRIP = "trip";
 	private static final String COLUMN_TRIP_ID = "id"; // convention
 	private static final String COLUMN_TRIP_DATE = "date";
 	private static final String COLUMN_TRIP_DESTINATION = "destination";
+	private static final String COLUMN_SERVER_TRIP_ID = "server_trip_id";
 
 	private static final String TABLE_FRIENDS = "friends";
 	private static final String COLUMN_FRND_TRIPID = "trip_id";
@@ -41,7 +42,7 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
 		// create trip table
 		db.execSQL("create table " + TABLE_TRIP + "(" + COLUMN_TRIP_ID
 				+ " integer primary key autoincrement, " + COLUMN_TRIP_DATE
-				+ " varchar(10), " + COLUMN_TRIP_DESTINATION + " text)");
+				+ " varchar(10), " + COLUMN_TRIP_DESTINATION + " text," + COLUMN_SERVER_TRIP_ID + " integer)");
 		// create location table
 		db.execSQL("create table " + TABLE_FRIENDS + "(" + COLUMN_FRND_ID
 				+ " integer primary key autoincrement, " + COLUMN_FRND_TRIPID
@@ -64,10 +65,24 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_TRIP_DATE, trip.getmDate().toString());
 		cv.put(COLUMN_TRIP_DESTINATION, trip.getmDestination());
+		cv.put(COLUMN_SERVER_TRIP_ID, trip.getmId());
 		// return id of new trip
 		return getWritableDatabase().insert(TABLE_TRIP, null, cv);
 	}
-
+	
+/*	public long updateTrip(Trip trip) {
+		ContentValues cv = new ContentValues();
+		cv.put(COLUMN_TRIP_DATE, trip.getmDate().toString());
+		cv.put(COLUMN_TRIP_DESTINATION, trip.getmDestination());
+		cv.put(COLUMN_SERVER_TRIP_ID, trip.getmId());
+		
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery("select id from " + TABLE_TRIP + " where id = (select max(" + COLUMN_TRIP_ID + ") from " + TABLE_TRIP + ")", null);
+		
+		// return id of new trip
+		return getWritableDatabase().insert(TABLE_TRIP, null, cv);
+	}
+*/
 	public long insertFriends(long id, Person friend) {
 		ContentValues cv = new ContentValues();
 //		SQLiteDatabase db = this.getReadableDatabase();
@@ -107,12 +122,13 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
 			Cursor cursorFrnd = db.rawQuery("select name from " + TABLE_FRIENDS + " where " + COLUMN_FRND_TRIPID + "=?", new String[] {""+id+""});
 //			trip.setmId(cursor.getInt(0));
 			
-			SimpleDateFormat curFormater = new SimpleDateFormat("MM/dd/yyyy", Locale.US); 
+//			SimpleDateFormat curFormater = new SimpleDateFormat("MM/dd/yyyy", Locale.US); 
 //			Date dateObj = curFormater.parse(cursor.getString(1));
-			DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+			DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy", Locale.US);
 			Date date = (Date)formatter.parse(cursor.getString(1));
 			trip.setmDate(date);
 			trip.setmDestination(cursor.getString(2));
+			trip.setmId(cursor.getLong(3));
 			ArrayList<Person> people = new ArrayList<Person>();
 			for (cursorFrnd.moveToFirst(); !cursorFrnd.isAfterLast(); cursorFrnd.moveToNext()) {
 				Person p = new Person();

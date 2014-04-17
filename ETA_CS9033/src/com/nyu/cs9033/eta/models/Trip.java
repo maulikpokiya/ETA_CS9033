@@ -3,8 +3,6 @@ package com.nyu.cs9033.eta.models;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,14 +16,14 @@ public class Trip implements Parcelable {
 	 * private String location = null; private String date = null; // private
 	 * String time = null; private String friends = null;
 	 */
-	private UUID mId;
+	private long mId;
 	private String mDestination;
 	private Date mDate;
 	//	private String mDate;
 	private List<Person> people; // could be list of objects too
 //	private ArrayList<String> people;
 	
-	private static final String JSON_ID = "id";
+//	private static final String JSON_ID = "id";
 	private static final String JSON_DESTINATION = "destination";
 	private static final String JSON_PEOPLE = "people";
 	private static final String JSON_DATE = "date";
@@ -35,7 +33,7 @@ public class Trip implements Parcelable {
 		/*mDate = null;
 		mDestination = null;*/
 		people = new ArrayList<Person>();
-		mId = UUID.randomUUID();
+//		mId = UUID.randomUUID();
 		mDate = new Date();
 		mDestination = null;
 //		people = new ArrayList<String>();
@@ -100,12 +98,12 @@ public class Trip implements Parcelable {
 		this.mDestination = mDestination;
 	}
 
-	public UUID getmId() {
+	public long getmId() {
 		return mId;
 	}
 
 
-	public void setmId(UUID mId) {
+	public void setmId(long mId) {
 		this.mId = mId;
 	}
 
@@ -174,7 +172,7 @@ public class Trip implements Parcelable {
 	
 	public JSONObject toJSON() throws JSONException {
 		JSONObject json = new JSONObject();
-		json.put(JSON_ID, mId.toString());
+//		json.put(JSON_ID, mId.toString());
 		json.put(JSON_DESTINATION, mDestination);
 		json.put(JSON_PEOPLE, new JSONArray(people));
 		json.put(JSON_DATE, mDate.getTime());

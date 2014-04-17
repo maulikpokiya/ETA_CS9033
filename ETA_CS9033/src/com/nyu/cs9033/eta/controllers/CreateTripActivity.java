@@ -7,12 +7,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.nyu.cs9033.eta.db.JSONParser;
 import com.nyu.cs9033.eta.db.TripDatabaseHelper;
+import com.nyu.cs9033.eta.json.JSONParser;
 import com.nyu.cs9033.eta.models.Person;
 import com.nyu.cs9033.eta.models.Trip;
 import com.nyu.cs9033.eta.R;
@@ -70,7 +71,8 @@ public class CreateTripActivity extends Activity {
 	private static String create_trip_command = "CREATE_TRIP";
 
 	// JSON Node names
-	private static final String TAG_SUCCESS = "success";
+	private static final String TAG_RESPONSE = "response_code";
+	private static final String TAG_TRIP = "trip_id";
 
 	Intent intent = new Intent();
 	private static final int REQUEST_CONTACT = 2;
@@ -145,7 +147,7 @@ public class CreateTripActivity extends Activity {
 			 */
 
 			// creating new trip in background thread
-			 new CreateNewTrip().execute(create_trip_command, location, tripDate.toString(), allNames.toString());
+			 new CreateNewTrip().execute(create_trip_command, location);
 		}
 		Intent i = new Intent(this, MainActivity.class);
 		startActivity(i);
@@ -460,27 +462,31 @@ public class CreateTripActivity extends Activity {
 		 * */
 		protected String doInBackground(String... args) {
 
-			// Building Parameters
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("command", args[0]));
-			params.add(new BasicNameValuePair("location", args[1]));
-			params.add(new BasicNameValuePair("datetime", args[2]));
-			params.add(new BasicNameValuePair("people", args[3]));
-
+			JSONObject jsonObject = new JSONObject();
+			try {
+            jsonObject.accumulate("command", args[0]);
+            jsonObject.accumulate("location", args[1]);
+            jsonObject.accumulate("datetime", tripTime);
+            jsonObject.accumulate("people", allNames);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
 			// getting JSON Object
 			JSONObject json = jsonParser.makeHttpRequest(create_trip_url,
-					"POST", params);
+					"POST", jsonObject);
 
 			// check log cat for response
 			Log.d("JSON",
-					"JSON Response in RegistrationActivity :" + json.toString());
+					"JSON Response in CreateTripActivity :" + json.toString());
 
 			// check for success tag
 			try {
-				int success = json.getInt(TAG_SUCCESS);
+				int response = json.getInt(TAG_RESPONSE);
 
-				if (success == 1) {
-
+				if (response == 0) {
+					int trip_id = json.getInt(TAG_TRIP);
+					intent.putExtra(TAG_TRIP, trip_id);
 					intent.setClass(CreateTripActivity.this, MainActivity.class);
 					CreateTripActivity.this.startActivity(intent);
 					CreateTripActivity.this.finish();
@@ -493,7 +499,7 @@ public class CreateTripActivity extends Activity {
 									.setIcon(android.R.drawable.ic_dialog_alert)
 									.setTitle("Error")
 									.setMessage(
-											"Oops, Error occurred while signing up.")
+											"Oops, Error occurred while creating trip.")
 									.setPositiveButton("OK", null).show();
 						}
 					});
@@ -501,7 +507,7 @@ public class CreateTripActivity extends Activity {
 				}
 			} catch (JSONException je) {
 				Log.e("ERROR",
-						"Error in RegistrationActivity.signup()"
+						"Error in CreateTripActivity.createTrip()"
 								+ je.toString());
 			}
 			return "Success";

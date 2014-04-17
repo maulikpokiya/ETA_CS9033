@@ -58,7 +58,7 @@ public class CreateTripActivity extends Activity {
 	private TextView tvDisplayTime;
 	private Button btnChangeDate;
 	private Button btnChangeTime;
-	
+
 	private TextView tvTripLocation;
 	private TextView tvTripFriends;
 	TripDatabaseHelper tdh = new TripDatabaseHelper(this);
@@ -77,9 +77,9 @@ public class CreateTripActivity extends Activity {
 	Intent intent = new Intent();
 	private static final int REQUEST_CONTACT = 2;
 
-	 private Date tripDate;
-	 private Long tripTime;
-	 private static String tripLocation;
+	private Date tripDate;
+	private Long tripTime;
+	private static String tripLocation;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -119,8 +119,8 @@ public class CreateTripActivity extends Activity {
 		String time = tvDisplayTime.getText().toString().trim();
 		String friends = tvTripFriends.getText().toString().trim();
 
-		if (TextUtils.isEmpty(location) || TextUtils.isEmpty(date) || TextUtils.isEmpty(time)
-				|| TextUtils.isEmpty(friends)) {
+		if (TextUtils.isEmpty(location) || TextUtils.isEmpty(date)
+				|| TextUtils.isEmpty(time) || TextUtils.isEmpty(friends)) {
 			Toast.makeText(this, "All fields are mendatory.", Toast.LENGTH_LONG)
 					.show();
 		} else {
@@ -129,16 +129,9 @@ public class CreateTripActivity extends Activity {
 			tripDate = cal.getTime();
 			tripTime = tripDate.getTime() / 1000L;
 			tripLocation = location;
-//			persistTrip(p);
-			/*
-			 * intent.putExtra("location", firstName);
-			 * intent.putExtra("datetime", lastName); 
-			 * intent.putExtra("people", password); 
-			 * intent.putExtra("email", email);
-			 */
 
 			// creating new trip in background thread
-			 new CreateNewTrip().execute(create_trip_command, location);
+			new CreateNewTrip().execute(create_trip_command, location);
 		}
 		Intent i = new Intent(this, MainActivity.class);
 		startActivity(i);
@@ -157,6 +150,7 @@ public class CreateTripActivity extends Activity {
 		p.setPeople(allPerson);
 		return p;
 	}
+
 	// display current date time
 	public void setCurrentDateTimeOnView() {
 
@@ -177,11 +171,6 @@ public class CreateTripActivity extends Activity {
 		// set current time into textview
 		tvDisplayTime.setText(new StringBuilder().append(pad(hour)).append(":")
 				.append(pad(minute)));
-
-		// set current time into timepicker
-		// timePicker1.setCurrentHour(hour);
-		// timePicker1.setCurrentMinute(minute);
-
 	}
 
 	public void addListenerOnButton() {
@@ -206,13 +195,10 @@ public class CreateTripActivity extends Activity {
 			public void onClick(View v) {
 
 				showDialog(TIME_DIALOG_ID);
-
 			}
-
 		});
-
 	}
-	
+
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
@@ -225,7 +211,6 @@ public class CreateTripActivity extends Activity {
 			// set time picker as current time
 			return new TimePickerDialog(this, timePickerListener, hour, minute,
 					false);
-
 		}
 		return null;
 	}
@@ -243,10 +228,6 @@ public class CreateTripActivity extends Activity {
 			tvDisplayDate.setText(new StringBuilder().append(month + 1)
 					.append("/").append(day).append("/").append(year)
 					.append(" "));
-
-			// set selected date into datepicker also
-			// dpResult.init(year, month, day, null);
-
 		}
 	};
 
@@ -259,11 +240,6 @@ public class CreateTripActivity extends Activity {
 			// set current time into textview
 			tvDisplayTime.setText(new StringBuilder().append(pad(hour))
 					.append(":").append(pad(minute)));
-
-			// set current time into timepicker
-			// timePicker1.setCurrentHour(hour);
-			// timePicker1.setCurrentMinute(minute);
-
 		}
 	};
 
@@ -291,7 +267,6 @@ public class CreateTripActivity extends Activity {
 			tdh.insertFriends(id, itr.next());
 		}
 		Intent intent = new Intent(CreateTripActivity.this, MainActivity.class);
-		// intent.putExtra("parcel", trip);
 		setResult(RESULT_OK, intent);
 		finish();
 		return true;
@@ -417,7 +392,7 @@ public class CreateTripActivity extends Activity {
 				builder.setItems(items, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int item) {
 						String selectedNumber = items[item].toString();
-//						selectedNumber = selectedNumber.replace("-", "");
+						// selectedNumber = selectedNumber.replace("-", "");
 						tvTripFriends.append(selectedNumber);
 					}
 				});
@@ -458,7 +433,7 @@ public class CreateTripActivity extends Activity {
 			pDialog.setMessage("Creating Trip..");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(true);
-//			pDialog.show();
+			// pDialog.show();
 		}
 
 		/**
@@ -467,62 +442,62 @@ public class CreateTripActivity extends Activity {
 		protected String doInBackground(String... args) {
 
 			String status = "Failure";
-			ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo netInfo = connMgr.getActiveNetworkInfo();
-			if(netInfo != null & netInfo.isConnected()) {
-			JSONObject jsonObject = new JSONObject();
-			try {
-            jsonObject.accumulate("command", args[0]);
-            jsonObject.accumulate("location", args[1]);
-            jsonObject.accumulate("datetime", tripTime);
-            jsonObject.accumulate("people", allNames);
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
-			// getting JSON Object
-			JSONObject json = jsonParser.makeHttpRequest(create_trip_url,
-					"POST", jsonObject);
-
-			// check log cat for response
-			Log.d("JSON",
-					"JSON Response in CreateTripActivity :" + json.toString());
-
-			// check for success tag
-			try {
-				int response = json.getInt(TAG_RESPONSE);
-
-				if (response == 0) {
-					long trip_id = json.getLong(TAG_TRIP);
-					Trip trip = setTrip();
-					trip.setmId(trip_id);
-					persistTrip(trip);
-					intent.setClass(CreateTripActivity.this, MainActivity.class);
-					CreateTripActivity.this.startActivity(intent);
-					CreateTripActivity.this.finish();
-				} else {
-					// failed to create User
-					CreateTripActivity.this.runOnUiThread(new Runnable() {
-						public void run() {
-							// your alert dialog builder here
-							new AlertDialog.Builder(CreateTripActivity.this)
-									.setIcon(android.R.drawable.ic_dialog_alert)
-									.setTitle("Error")
-									.setMessage(
-											"Oops, Error occurred while creating trip.")
-									.setPositiveButton("OK", null).show();
-						}
-					});
-
+			if (netInfo != null & netInfo.isConnected()) {
+				JSONObject jsonObject = new JSONObject();
+				try {
+					jsonObject.accumulate("command", args[0]);
+					jsonObject.accumulate("location", args[1]);
+					jsonObject.accumulate("datetime", tripTime);
+					jsonObject.accumulate("people", allNames);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			} catch (JSONException je) {
-				Log.e("ERROR",
-						"Error in CreateTripActivity.createTrip()"
-								+ je.toString());
-			}
-			status = "Success";
-			}
-			else {
+				// getting JSON Object
+				JSONObject json = jsonParser.makeHttpRequest(create_trip_url,
+						"POST", jsonObject);
+
+				// check log cat for response
+				Log.d("JSON",
+						"JSON Response in CreateTripActivity :"
+								+ json.toString());
+
+				// check for success tag
+				try {
+					int response = json.getInt(TAG_RESPONSE);
+
+					if (response == 0) {
+						long trip_id = json.getLong(TAG_TRIP);
+						Trip trip = setTrip();
+						trip.setmId(trip_id);
+						persistTrip(trip);
+						intent.setClass(CreateTripActivity.this,
+								MainActivity.class);
+						CreateTripActivity.this.startActivity(intent);
+						CreateTripActivity.this.finish();
+					} else {
+						// failed to create User
+						CreateTripActivity.this.runOnUiThread(new Runnable() {
+							public void run() {
+								// your alert dialog builder here
+								new AlertDialog.Builder(CreateTripActivity.this)
+										.setIcon(
+												android.R.drawable.ic_dialog_alert)
+										.setTitle("Error")
+										.setMessage(
+												"Oops, Error occurred while creating trip.")
+										.setPositiveButton("OK", null).show();
+							}
+						});
+
+					}
+				} catch (JSONException je) {
+					Log.e("ERROR", "Error in CreateTripActivity.createTrip()"
+							+ je.toString());
+				}
+				status = "Success";
+			} else {
 				// No network connection
 				CreateTripActivity.this.runOnUiThread(new Runnable() {
 					public void run() {
@@ -530,8 +505,7 @@ public class CreateTripActivity extends Activity {
 						new AlertDialog.Builder(CreateTripActivity.this)
 								.setIcon(android.R.drawable.ic_dialog_alert)
 								.setTitle("Error")
-								.setMessage(
-										"Network not found.")
+								.setMessage("Network not found.")
 								.setPositiveButton("OK", null).show();
 					}
 				});
@@ -544,7 +518,7 @@ public class CreateTripActivity extends Activity {
 		 * **/
 		protected void onPostExecute(String file_url) {
 			// dismiss the dialog after getting all products
-//			pDialog.dismiss();
+			// pDialog.dismiss();
 		}
 
 	}

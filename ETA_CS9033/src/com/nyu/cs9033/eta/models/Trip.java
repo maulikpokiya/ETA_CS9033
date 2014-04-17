@@ -19,24 +19,21 @@ public class Trip implements Parcelable {
 	private long mId;
 	private String mDestination;
 	private Date mDate;
-	//	private String mDate;
+	// private String mDate;
 	private List<Person> people; // could be list of objects too
-//	private ArrayList<String> people;
-	
-//	private static final String JSON_ID = "id";
+	// private ArrayList<String> people;
+
+	// private static final String JSON_ID = "id";
 	private static final String JSON_DESTINATION = "destination";
 	private static final String JSON_PEOPLE = "people";
 	private static final String JSON_DATE = "date";
 
 	public Trip() {
-		// mId = UUID.randomUUID();
-		/*mDate = null;
-		mDestination = null;*/
+
 		people = new ArrayList<Person>();
-//		mId = UUID.randomUUID();
+		// mId = UUID.randomUUID();
 		mDate = new Date();
 		mDestination = null;
-//		people = new ArrayList<String>();
 	}
 
 	public static final Parcelable.Creator<Trip> CREATOR = new Parcelable.Creator<Trip>() {
@@ -48,7 +45,7 @@ public class Trip implements Parcelable {
 			trip.mDestination = p.readString();
 			p.readTypedList(trip.people, Person.CREATOR);
 			return trip;
-//			return new Trip(p);
+			// return new Trip(p);
 		}
 
 		public Trip[] newArray(int size) {
@@ -64,26 +61,25 @@ public class Trip implements Parcelable {
 	 */
 	public Trip(Parcel p) {
 
-		
-/*		mDate = p.readString();
-		mDestination = p.readString();
-		p.readTypedList(people, Person.CREATOR);*/
-	/*	String[] data = new String[2];
-		Log.v(TAG, "ParcelData(Parcel source): time to put back parcel data");
-        p.readStringArray(data);
-        this.mDestination = data[0];
-        this.mDate = data[1];
-        this.time = data[2];
-        this.people = data[2];
-*/	}
+		/*
+		 * mDate = p.readString(); mDestination = p.readString();
+		 * p.readTypedList(people, Person.CREATOR);
+		 */
+		/*
+		 * String[] data = new String[2]; Log.v(TAG,
+		 * "ParcelData(Parcel source): time to put back parcel data");
+		 * p.readStringArray(data); this.mDestination = data[0]; this.mDate =
+		 * data[1]; this.time = data[2]; this.people = data[2];
+		 */}
 
-	
 	public void writeToParcel(Parcel dest, int arg1) {
-//		Log.v(TAG, "writeToParcel..."+ flags);
+		
+		// Log.v(TAG, "writeToParcel..."+ flags);
 		dest.writeLong(mDate.getTime());
 		dest.writeString(mDestination);
 		dest.writeTypedList(people);
-//		dest.writeStringArray(new String[] { this.mDestination, this.mDate, this.people.toString() });
+		// dest.writeStringArray(new String[] { this.mDestination, this.mDate,
+		// this.people.toString() });
 	}
 
 	/**
@@ -102,37 +98,17 @@ public class Trip implements Parcelable {
 		return mId;
 	}
 
-
 	public void setmId(long mId) {
 		this.mId = mId;
 	}
-
 
 	public Date getmDate() {
 		return mDate;
 	}
 
-
 	public void setmDate(Date mDate) {
 		this.mDate = mDate;
 	}
-
-
-/*	public ArrayList<String> getPeople() {
-		return people;
-	}
-
-
-	public void setPeople(ArrayList<String> people) {
-		this.people = people;
-	}*/
-/*	public String getmDate() {
-		return mDate;
-	}
-
-	public void setmDate(String mDate) {
-		this.mDate = mDate;
-	}*/
 
 	public List<Person> getPeople() {
 		return people;
@@ -142,25 +118,6 @@ public class Trip implements Parcelable {
 		this.people = people;
 	}
 
-	/*
-	 * public String getLocation() { return location; }
-	 * 
-	 * public void setLocation(String location) { this.location = location; }
-	 * 
-	 * public String getDate() { return date; }
-	 * 
-	 * public void setDate(String date) { this.date = date; }
-	 */
-	/*
-	 * public String getTime() { return time; }
-	 * 
-	 * public void setTime(String time) { this.time = time; }
-	 */
-	/*
-	 * public String getFriends() { return friends; }
-	 * 
-	 * public void setFriends(String friends) { this.friends = friends; }
-	 */
 	/**
 	 * Do not implement
 	 */
@@ -169,10 +126,10 @@ public class Trip implements Parcelable {
 		// Do not implement!
 		return 0;
 	}
-	
+
 	public JSONObject toJSON() throws JSONException {
 		JSONObject json = new JSONObject();
-//		json.put(JSON_ID, mId.toString());
+		// json.put(JSON_ID, mId.toString());
 		json.put(JSON_DESTINATION, mDestination);
 		json.put(JSON_PEOPLE, new JSONArray(people));
 		json.put(JSON_DATE, mDate.getTime());

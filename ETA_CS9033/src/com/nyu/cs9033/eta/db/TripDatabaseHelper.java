@@ -19,7 +19,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class TripDatabaseHelper extends SQLiteOpenHelper {
 
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 5;
 	private static final String DATABASE_NAME = "trips";
 
 	private static final String TABLE_TRIP = "trip";
@@ -42,7 +42,7 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
 		// create trip table
 		db.execSQL("create table " + TABLE_TRIP + "(" + COLUMN_TRIP_ID
 				+ " integer primary key autoincrement, " + COLUMN_TRIP_DATE
-				+ " varchar(10), " + COLUMN_TRIP_DESTINATION + " text,"
+				+ " date, " + COLUMN_TRIP_DESTINATION + " text,"
 				+ COLUMN_SERVER_TRIP_ID + " integer)");
 		// create location table
 		db.execSQL("create table " + TABLE_FRIENDS + "(" + COLUMN_FRND_ID
@@ -64,7 +64,11 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
 
 	public long insertTrip(Trip trip) {
 		ContentValues cv = new ContentValues();
-		cv.put(COLUMN_TRIP_DATE, trip.getmDate().toString());
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+                "MM-dd-yyyy", Locale.getDefault());
+        Date date = trip.getmDate();
+//        return dateFormat.format(date);
+		cv.put(COLUMN_TRIP_DATE, dateFormat.format(date));
 		cv.put(COLUMN_TRIP_DESTINATION, trip.getmDestination());
 		cv.put(COLUMN_SERVER_TRIP_ID, trip.getmId());
 		// return id of new trip
@@ -127,8 +131,8 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
 			// SimpleDateFormat curFormater = new SimpleDateFormat("MM/dd/yyyy",
 			// Locale.US);
 			// Date dateObj = curFormater.parse(cursor.getString(1));
-			DateFormat formatter = new SimpleDateFormat(
-					"E MMM dd HH:mm:ss Z yyyy", Locale.US);
+			DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+//					"E MMM dd HH:mm:ss Z yyyy", Locale.US);
 			Date date = (Date) formatter.parse(cursor.getString(1));
 			trip.setmDate(date);
 			trip.setmDestination(cursor.getString(2));
@@ -146,4 +150,21 @@ public class TripDatabaseHelper extends SQLiteOpenHelper {
 		return tripList;
 	}
 
+	public int getCurrentTripId() {
+		SQLiteDatabase db = this.getReadableDatabase();
+		Date date = new Date();
+		DateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault());
+		Cursor cursor = db.rawQuery("select * from " + TABLE_TRIP
+				+ " where " + COLUMN_TRIP_DATE + "=?", new String[] { ""
+				+ formatter.format(date) + "" });
+		int id = 0;
+		if(cursor.getCount() > 0) {
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+				long sid = cursor.getInt(3);
+	//			id = Integer.valueOf(sid);
+				id = (int) sid;
+			}
+		}
+		return id;
+	}
 }

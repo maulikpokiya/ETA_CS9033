@@ -22,6 +22,7 @@ public class Trip implements Parcelable {
 	// private String mDate;
 	private List<Person> people; // could be list of objects too
 	// private ArrayList<String> people;
+	private String location;
 
 	// private static final String JSON_ID = "id";
 	private static final String JSON_DESTINATION = "destination";
@@ -118,6 +119,14 @@ public class Trip implements Parcelable {
 		this.people = people;
 	}
 
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	
 	/**
 	 * Do not implement
 	 */

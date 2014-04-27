@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -37,11 +38,12 @@ public class MainActivity extends Activity {
 	private static final String TAG_TIME = "time_left";
 	private static final String TAG_DISTANCE = "distance_left";
 	
+	private TextView status;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+		status = (TextView)findViewById(R.id.tvStatus);
 		long tripId = getCurrentTripId();
 		
 		if(tripId != 0) {
@@ -103,7 +105,7 @@ public class MainActivity extends Activity {
 			pDialog.setMessage("Getting Current Trip Status..");
 			pDialog.setIndeterminate(false);
 			pDialog.setCancelable(true);
-			// pDialog.show();
+			pDialog.show();
 		}
 
 		/**
@@ -112,6 +114,7 @@ public class MainActivity extends Activity {
 		protected String doInBackground(String... args) {
 
 			String status = "Failure";
+			JSONObject json = null;
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo netInfo = connMgr.getActiveNetworkInfo();
 			if (netInfo != null & netInfo.isConnected()) {
@@ -123,7 +126,7 @@ public class MainActivity extends Activity {
 					e.printStackTrace();
 				}
 				// getting JSON Object
-				JSONObject json = jsonParser.makeHttpRequest(trip_status_url,
+				json = jsonParser.makeHttpRequest(trip_status_url,
 						"POST", jsonObject);
 
 				// check log cat for response
@@ -131,39 +134,6 @@ public class MainActivity extends Activity {
 						"JSON Response in MainActivity :"
 								+ json.toString());
 
-				// check for success tag
-				try {
-					int response = json.getInt(TAG_PEOPLE);
-
-					if (response == 0) {
-//						long trip_id = json.getLong(TAG_TRIP);
-/*						Trip trip = setTrip();
-						trip.setmId(trip_id);
-						persistTrip(trip);
-						intent.setClass(MainActivity.this,
-								MainActivity.class);
-						MainActivity.this.startActivity(intent);
-						MainActivity.this.finish();*/
-					} else {
-						// failed to create User
-						MainActivity.this.runOnUiThread(new Runnable() {
-							public void run() {
-								// your alert dialog builder here
-								new AlertDialog.Builder(MainActivity.this)
-										.setIcon(
-												android.R.drawable.ic_dialog_alert)
-										.setTitle("Error")
-										.setMessage(
-												"Oops, Error occurred while creating trip.")
-										.setPositiveButton("OK", null).show();
-							}
-						});
-
-					}
-				} catch (JSONException je) {
-					Log.e("ERROR", "Error in MainActivity.getTripStatus()"
-							+ je.toString());
-				}
 				status = "Success";
 			} else {
 				// No network connection
@@ -178,16 +148,28 @@ public class MainActivity extends Activity {
 					}
 				});
 			}
-			return status;
+			return json.toString();
 		}
 
 		/**
 		 * After completing background task Dismiss the progress dialog
 		 * **/
-		protected void onPostExecute(String file_url) {
+		protected void onPostExecute(String result) {
+			status.setText(result);
 			// dismiss the dialog after getting all products
-			// pDialog.dismiss();
+			pDialog.dismiss();
 		}
+		
+		@Override  
+        protected void onCancelled() {  
+            Log.i("Cancel", "onCancelled() called");  
+            pDialog = new ProgressDialog(MainActivity.this);
+    		pDialog.setMessage("onCancelled called");
+    		pDialog.setIndeterminate(false);
+    		pDialog.setCancelable(true);
+    		pDialog.show();
+          
+        }  
 
 	}
 }

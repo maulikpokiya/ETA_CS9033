@@ -38,4 +38,12 @@
         android:text="@string/create_trip"
         android:onClick="startTripCreator" />
 
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/buttonViewTrip"
+        android:layout_below="@+id/buttonViewTrip"
+        android:layout_marginTop="79dp" />
+
 </RelativeLayout>

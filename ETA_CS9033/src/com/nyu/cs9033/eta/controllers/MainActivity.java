@@ -1,14 +1,10 @@
 package com.nyu.cs9033.eta.controllers;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.nyu.cs9033.eta.R;
-import com.nyu.cs9033.eta.controllers.CreateTripActivity.CreateNewTrip;
 import com.nyu.cs9033.eta.db.TripDatabaseHelper;
 import com.nyu.cs9033.eta.json.JSONParser;
-import com.nyu.cs9033.eta.models.Trip;
-
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -33,20 +29,16 @@ public class MainActivity extends Activity {
 	private static String trip_status_url = "http://cs9033-homework.appspot.com/";
 	private static String trip_status_command = "TRIP_STATUS";
 
-	// JSON Node names
-	private static final String TAG_PEOPLE = "people";
-	private static final String TAG_TIME = "time_left";
-	private static final String TAG_DISTANCE = "distance_left";
-	
 	private TextView status;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		status = (TextView)findViewById(R.id.tvStatus);
+		status = (TextView) findViewById(R.id.tvStatus);
 		long tripId = getCurrentTripId();
-		
-		if(tripId != 0) {
+
+		if (tripId != 0) {
 			getTripStatus(tripId);
 		}
 	}
@@ -68,25 +60,27 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(this, TripHistoryActivity.class);
 		startActivity(intent);
 	}
-	
+
 	/**
 	 * getting current trip status in background thread
+	 * 
 	 * @param id
 	 */
 	public void getTripStatus(long id) {
-		
+
 		new GetTripStatus().execute(trip_status_command, "" + id + "");
 	}
-	
+
 	/**
 	 * Gets current trip id from database.
+	 * 
 	 * @return id
 	 */
 	public long getCurrentTripId() {
 		long id = tdh.getCurrentTripId();
 		return id;
 	}
-	
+
 	/**
 	 * Background Async Task to get trip status
 	 * */
@@ -113,7 +107,7 @@ public class MainActivity extends Activity {
 		 * */
 		protected String doInBackground(String... args) {
 
-			String status = "Failure";
+			// String status = "Failure";
 			JSONObject json = null;
 			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo netInfo = connMgr.getActiveNetworkInfo();
@@ -126,15 +120,14 @@ public class MainActivity extends Activity {
 					e.printStackTrace();
 				}
 				// getting JSON Object
-				json = jsonParser.makeHttpRequest(trip_status_url,
-						"POST", jsonObject);
+				json = jsonParser.makeHttpRequest(trip_status_url, "POST",
+						jsonObject);
 
 				// check log cat for response
 				Log.d("JSON",
-						"JSON Response in MainActivity :"
-								+ json.toString());
+						"JSON Response in MainActivity :" + json.toString());
 
-				status = "Success";
+				// status = "Success";
 			} else {
 				// No network connection
 				MainActivity.this.runOnUiThread(new Runnable() {
@@ -159,17 +152,17 @@ public class MainActivity extends Activity {
 			// dismiss the dialog after getting all products
 			pDialog.dismiss();
 		}
-		
-		@Override  
-        protected void onCancelled() {  
-            Log.i("Cancel", "onCancelled() called");  
-            pDialog = new ProgressDialog(MainActivity.this);
-    		pDialog.setMessage("onCancelled called");
-    		pDialog.setIndeterminate(false);
-    		pDialog.setCancelable(true);
-    		pDialog.show();
-          
-        }  
+
+		@Override
+		protected void onCancelled() {
+			Log.i("Cancel", "onCancelled() called");
+			pDialog = new ProgressDialog(MainActivity.this);
+			pDialog.setMessage("onCancelled called");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(true);
+			pDialog.show();
+
+		}
 
 	}
 }

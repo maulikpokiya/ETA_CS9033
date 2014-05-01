@@ -12,6 +12,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,8 @@ import android.widget.TextView;
 
 public class TripHistoryActivity extends ListActivity {
 
-	ListView listView;
-	TripDatabaseHelper tdh = new TripDatabaseHelper(this);;
+	private ListView listView;
+	private TripDatabaseHelper tdh = new TripDatabaseHelper(this);;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +46,11 @@ public class TripHistoryActivity extends ListActivity {
 		public int getCount() {
 			try {
 				return getAllTrips().size();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (ParseException pe) {
+				Log.e("TripHistoryActivity.getCount() - ParseException", pe.toString());
+			}
+			catch (Exception e) {
+				Log.e("TripHistoryActivity.getCount() - Exception", e.toString());
 			}
 			return 0;
 		}
@@ -72,17 +75,18 @@ public class TripHistoryActivity extends ListActivity {
 						.findViewById(R.id.ltext);
 				convertView.setTag(viewCache);
 			}
-			try{
-				
 			
+			try {
 			ItemViewCache cache = (ItemViewCache) convertView.getTag();
 
 			cache.lTextView.setText(getAllTrips().get(position).getmDate()
 					+ "\n" + getAllTrips().get(position).getmDestination());
 			}
-			catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			catch (ParseException pe) {
+				Log.e("TripHistoryActivity.getView() - ParseException", pe.toString());
+			}
+			catch (Exception e) {
+				Log.e("TripHistoryActivity.getView() - Exception", e.toString());
 			}
 			return convertView;
 		}
@@ -113,9 +117,11 @@ public class TripHistoryActivity extends ListActivity {
 			Intent intent = new Intent(this, ViewTripActivity.class);
 			intent.putParcelableArrayListExtra("parcel", trips);
 			startActivity(intent);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (ParseException pe) {
+			Log.e("TripHistoryActivity.onListItemClick() - ParseException", pe.toString());
+		}
+		catch (Exception e) {
+			Log.e("TripHistoryActivity.onListItemClick() - Exception", e.toString());
 		}
 	}
 }

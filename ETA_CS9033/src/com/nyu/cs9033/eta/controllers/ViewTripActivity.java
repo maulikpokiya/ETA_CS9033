@@ -107,9 +107,13 @@ public class ViewTripActivity extends Activity {
 				 * intent.putExtra("time", String.valueOf(location.getTime()));
 				 */
 
-			} catch (IndexOutOfBoundsException e) {
+			} catch (IndexOutOfBoundsException iobe) {
 				Toast.makeText(this, "Cannot locate input location", Toast.LENGTH_SHORT).show();
 				System.out.println("Cannot locat input location");
+				Log.e("ViewTripActivity.printGpsLocation() - IndexOutOfBoundsException", iobe.toString());
+			}
+			catch (Exception e) {
+				Log.e("ViewTripActivity.printGpsLocation() - Exception", e.toString());
 			}
 		}
 	}
@@ -124,8 +128,7 @@ public class ViewTripActivity extends Activity {
 	/**
 	 * Create the most recent trip that was passed to TripViewer.
 	 * 
-	 * @param i
-	 *            The Intent that contains the most recent trip data.
+	 * @param i The Intent that contains the most recent trip data.
 	 * 
 	 * @return The Trip that was most recently passed to TripViewer, or null if
 	 *         there is none.
@@ -157,9 +160,11 @@ public class ViewTripActivity extends Activity {
 			System.out.println("latitude: " + latitude + " longitude: "
 					+ longitude);
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException ioe) {
+			Log.e("ViewTripActivity.getLongitudeAndLatitudeFromAddress() - IOException", ioe.toString());
+		}
+		catch (Exception e) {
+			Log.e("ViewTripActivity.getLongitudeAndLatitudeFromAddress() - Exception", e.toString());
 		}
 
 		Double[] location = { latitude, longitude };
@@ -170,8 +175,7 @@ public class ViewTripActivity extends Activity {
 	/**
 	 * Populate the View using a Trip model.
 	 * 
-	 * @param trip
-	 *            The Trip model used to populate the View.
+	 * @param trip The Trip model used to populate the View.
 	 */
 	public void initView(Trip trip) {
 
@@ -197,7 +201,6 @@ public class ViewTripActivity extends Activity {
 
 	public void cancelTripView(View view) {
 
-		// TODO - fill in here
 		// setResult(RESULT_CANCELED);
 		finish();
 	}

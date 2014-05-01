@@ -108,7 +108,7 @@ public class ViewTripActivity extends Activity {
 				 */
 
 			} catch (IndexOutOfBoundsException e) {
-				Toast.makeText(this, "Cannot locate input location", 0).show();
+				Toast.makeText(this, "Cannot locate input location", Toast.LENGTH_SHORT).show();
 				System.out.println("Cannot locat input location");
 			}
 		}

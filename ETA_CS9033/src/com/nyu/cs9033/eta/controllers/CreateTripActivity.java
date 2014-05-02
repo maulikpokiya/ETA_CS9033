@@ -454,6 +454,7 @@ public class CreateTripActivity extends Activity {
 					jsonObject.accumulate("datetime", tripTime);
 					jsonObject.accumulate("people", allNames);
 				} catch (Exception e) {
+					Log.e("CreateNewTrip.doInBackground", e.toString());
 					e.printStackTrace();
 				}
 				// getting JSON Object
@@ -495,7 +496,7 @@ public class CreateTripActivity extends Activity {
 
 					}
 				} catch (JSONException je) {
-					Log.e("ERROR", "Error in CreateTripActivity.createTrip()"
+					Log.e("ERROR", "Error in CreateNewTrip.doInBackground()"
 							+ je.toString());
 				}
 				status = "Success";
